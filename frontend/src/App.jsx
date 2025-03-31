@@ -1,4 +1,4 @@
-import Frontend from "./frontend";
+import Frontend from "./Frontend";
 
 function App() {
   return <Frontend />;

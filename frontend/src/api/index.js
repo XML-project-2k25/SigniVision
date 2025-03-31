@@ -1,0 +1,1 @@
+export {getPredictions} from './predictionAPI'
