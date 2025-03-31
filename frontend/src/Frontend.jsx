@@ -116,47 +116,66 @@ export default function Frontend() {
                 Close Camera
               </button>
             )}
-            <div
-              className="video-container"
-              style={{
-                width: "100%",
-                height: "300px",
-                display: cameraActive ? "block" : "none",
-              }}
-            >
-              <video
-                ref={videoRef}
-                className="media"
-                autoPlay
-                playsInline
-                style={{ width: "100%", height: "100%" }}
-              />
-            </div>
             <input
               type="file"
               accept="image/*"
               onChange={handleFileUpload}
               className="file-input"
+              style={{}}
             />
-            <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-            {image && (
-              <>
-                <img
-                  src={image}
-                  alt="Captured"
+            <div
+              className="container"
+              style={{
+                display: "flex",
+                flexDirection: "row",
+              }}
+            >
+              <div
+                className="video-container"
+                style={{
+                  width: "100%",
+                  height: "300px",
+                  display: cameraActive ? "block" : "none",
+                }}
+              >
+                <video
+                  ref={videoRef}
                   className="media"
-                  id="captured-img"
+                  autoPlay
+                  playsInline
+                  style={{ width: "100%", height: "100%" }}
                 />
-                <h3
+              </div>
+              <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
+              {image && (
+                <div
                   style={{
-                    backgroundColor: "black",
-                    padding: "10px 20px",
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
                   }}
                 >
-                  {Text ? Text : ""}
-                </h3>
-              </>
-            )}
+                  <img
+                    src={image}
+                    alt="Captured"
+                    className="media"
+                    id="captured-img"
+                  />
+                  <h3
+                    style={{
+                      backgroundColor: "black",
+                      padding: "5px 5px",
+                      position: "absolute",
+                      left: "50%",
+                      top: "80%",
+                      transform: "translate(-50%, -80%)",
+                    }}
+                  >
+                    {Text ? Text : ""}
+                  </h3>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
