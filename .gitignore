@@ -1,5 +1,7 @@
 /myenv
 /yolov5
+.venv
+__pycache__
 
 # Logs
 logs
