@@ -31,7 +31,7 @@ app.add_middleware(
 
 
 class VitsTTS:
-    def _init_(self, model_name="kakao-enterprise/vits-ljs"):
+    def __init__(self, model_name="kakao-enterprise/vits-ljs"):
         """Initialize the VITS model and tokenizer."""
         print("Loading model and tokenizer...")
         self.model = VitsModel.from_pretrained(model_name)
@@ -86,6 +86,6 @@ async def predict(file: UploadFile = File(...)):
 
 
 
-if __name__ == "_main_":
+if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
