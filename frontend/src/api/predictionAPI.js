@@ -10,7 +10,7 @@ export const getPredictions = async (formData) => {
     }
 
     const data = await response.json();
-    return data[0]?.name;
+    return [data[0]?.name, data[0]?.audio];
   } catch (error) {
     console.error("Error fetching predictions:", error);
   }

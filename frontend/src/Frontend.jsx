@@ -20,6 +20,22 @@ export default function Frontend() {
     };
   }, []);
 
+  const playAudio = (audio) => {
+    if (!audio) return;
+    
+    try {
+      // Create an audio element
+      const audioElement = new Audio(`data:audio/wav;base64,${audio}`);
+      
+      // Play the audio
+      audioElement.play().catch(error => {
+        console.error("Error playing audio:", error);
+      });
+    } catch (error) {
+      console.error("Error setting up audio:", error);
+    }
+  };
+
   const sendBlobToPrediction = (blob) => {
     const formData = new FormData();
     // Append the blob as a file to FormData
@@ -27,7 +43,8 @@ export default function Frontend() {
 
     // Call getPredictions with formData
     getPredictions(formData).then((data) => {
-      setText(data);
+      setText(data[0]);
+      playAudio(data[1]);
     });
   };
 
