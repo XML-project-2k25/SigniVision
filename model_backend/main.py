@@ -7,9 +7,16 @@ from PIL import Image
 from io import BytesIO
 from transformers import VitsModel, AutoTokenizer
 import scipy.io.wavfile as wavfile
+from fastapi import FastAPI, WebSocket
+from fastapi.websockets import WebSocketDisconnect
+from typing import List,Dict
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
-app = FastAPI()
+app = FastAPI(title="Sign Detection API", version="1.0.0")
 
 # Check if CUDA is available
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -28,6 +35,42 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
+class ConnectionManager:
+    def __init__(self):
+        self.rooms:Dict[str,List[WebSocket]] = {}
+
+    async def connect(self,room_id: str,ws:WebSocket):
+        await ws.accept()
+        self.rooms.setdefault(room_id,[]).append(ws)
+        logger.info(f"Client connected to room {room_id}")
+    
+    def disconnect(self,room_id: str,ws:WebSocket):
+        self.rooms[room_id].remove(ws)
+        logger.info(f"Client disconnected from room {room_id}")
+        if not self.rooms[room_id]:
+            del self.rooms[room_id]
+            logger.info(f"Room {room_id} deleted")
+
+    async def broadcast(self,room_id: str,message:dict,sender:WebSocket):
+        for conn in self.rooms.get(room_id,[]):
+            if conn != sender:
+                await conn.send_json(message)
+
+
+manager = ConnectionManager()
+
+
+@app.websocket("/ws/{room_id}")
+async def websocket_endpoint(websocket: WebSocket, room_id: str):
+    await manager.connect(room_id,websocket)
+    try:
+        while True:
+            data = await websocket.receive_json()
+            await manager.broadcast(room_id,data,websocket)
+    except WebSocketDisconnect:
+        manager.disconnect(room_id,websocket)
 
 
 class VitsTTS:
@@ -75,7 +118,7 @@ tts_model = VitsTTS()
 async def predict(file: UploadFile = File(...)):
     contents = await file.read()
     img = Image.open(BytesIO(contents))
-    print(img.size)
+    # print(img.size)
     results = model(img)
     sign = results.pandas().xyxy[0].to_dict(orient="records")
 
