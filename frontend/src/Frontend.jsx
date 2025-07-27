@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import "./styles.css";
 import { Video, Image, User, LogOut, Camera } from "lucide-react";
 import { getPredictions } from "./api";
+import VideoCall from "./components/VideoCall";
 
 export default function Frontend() {
   const [image, setImage] = useState(null);
@@ -197,17 +198,7 @@ export default function Frontend() {
         </div>
       </div>
 
-      <div className="video-chat-container">
-        <button
-          className="button sky-blue video-chat"
-          onClick={() => setVideoChatActive(!videoChatActive)}
-        >
-          {videoChatActive ? "End Video Chat" : "Start Video Chat"}
-        </button>
-        {videoChatActive && (
-          <p className="status-text">Video Chat is Active...</p>
-        )}
-      </div>
+      <VideoCall />
     </div>
   );
 }

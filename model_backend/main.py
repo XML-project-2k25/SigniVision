@@ -116,9 +116,9 @@ tts_model = VitsTTS()
 
 @app.post("/predict/")
 async def predict(file: UploadFile = File(...)):
+    logger.info(f"Received prediction request: {file.filename}")
     contents = await file.read()
     img = Image.open(BytesIO(contents))
-    # print(img.size)
     results = model(img)
     sign = results.pandas().xyxy[0].to_dict(orient="records")
 
